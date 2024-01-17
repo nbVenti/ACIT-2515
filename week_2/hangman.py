@@ -1,9 +1,7 @@
 import random
 
-True
-
 def get_rand_word():
-    with open(r'Week 2\words.txt', "r") as f:
+    with open(r'week_2\words.txt', "r") as f:
         word = f.readlines()
         random_word = random.choice(word).strip("\n")
         print(random_word)
@@ -12,10 +10,17 @@ def get_rand_word():
 def hangman():
     word = get_rand_word()
     p_guesses = ['_'] * len(word)
+    guessed_letters = []
     
     while True:
         print(" ".join(p_guesses))
-        x = prompt("Enter letters to guess or word")
+        while True:
+            x = prompt("Enter letters to guess or word")
+            if x in guessed_letters:
+                print("You already guessed that letter")
+            else:
+                break
+        
         
         if x == word:
             win()
@@ -26,10 +31,8 @@ def hangman():
         
         if (" ".join(p_guesses).replace(" ", "")) == word:
             win()
-
-
-                
-            
+        
+        guessed_letters.append(x)          
 
 def prompt(user):
     u_input = input(user +"\n>>")
@@ -40,11 +43,11 @@ def prompt(user):
     
 def win():
     x = prompt("Do you want to play again")
-    print(x)
     if x == "y" or x == 'yes' or x == "Yes":
         hangman()
     else:
         exit()
     
-    
-hangman()
+
+if __name__ == "__main__":
+    hangman()
