@@ -39,7 +39,9 @@ def reveal_letters(word, letters):
     'P I Z Z A'
     """
     # WRITE YOUR CODE HERE
-    word = word.upper(); letters = [x.upper() for x in letters]; reveal = ["_"] * len(word)
+    word = word.upper()
+    letters = [x.upper() for x in letters]
+    reveal = ["_"] * len(word)
     for i in range(len(reveal)):
         if word[i] in letters:
             reveal[i] = word[i]
