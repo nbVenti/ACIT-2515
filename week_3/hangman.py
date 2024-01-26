@@ -1,7 +1,7 @@
 import random
 
 class SecretWord:
-    def __init__(self,word= "Vancouver"):
+    def __init__(self,word=None):
         if word == None:
             with open(r'./week_2\words.txt', "r") as f:
                 word = f.readlines()
