@@ -13,10 +13,20 @@ def populate_customer_datebase():
                 db.session.add(customers)
             db.session.commit()
             
-    
+def populate_product_datebase():
+    with app.app_context():
+        with open('./data/products.csv', 'r') as file:
+            reader = DictReader(file)
+            products = list(reader)
+            for i in products:
+                products = Product(product = i['name'],price = i['price'], available = True)
+                db.session.add(products)
+            db.session.commit()
+            
 
 if __name__ == "__main__":
     with app.app_context():
         db.drop_all()
         db.create_all()
         populate_customer_datebase()
+        populate_product_datebase()

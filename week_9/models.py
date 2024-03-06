@@ -12,5 +12,6 @@ class Customer(db.Model):
 class Product(db.Model):
  id = mapped_column(Integer, primary_key=True)
  product = mapped_column(String(200), nullable=False, unique=True)
- price = mapped_column(String(20), nullable=False)
+ price = mapped_column(Float(200), nullable=False)
+ available = mapped_column(Boolean, nullable=False, default=True)
 
