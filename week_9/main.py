@@ -33,6 +33,11 @@ def product_list():
             i["name"] = i["name"].capitalize()
     return render_template("products.html", products=products)
 
+@app.route('/api/customers')
+def customers_json():
+    pass
+    
+
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
     
