@@ -8,10 +8,25 @@ class Customer(db.Model):
  name = mapped_column(String(200), nullable=False, unique=True)
  phone = mapped_column(String(20), nullable=False)
  balance = mapped_column(Numeric, nullable=False, default=0)
+ def to_json(self):
+     return {
+         'id': self.id,
+         'name': self.name,
+         'phone': self.phone,
+         'balance': self.balance
+         }
+
 
 class Product(db.Model):
  id = mapped_column(Integer, primary_key=True)
  product = mapped_column(String(200), nullable=False, unique=True)
  price = mapped_column(Float(200), nullable=False)
- available = mapped_column(Boolean, nullable=False, default=True)
+ available = mapped_column(Integer, nullable=False, default=True)
+ def to_json(self):
+     return {
+         'id': self.id,
+         'product': self.product,
+         'price': self.price,
+         'available': self.available
+         }
 

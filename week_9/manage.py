@@ -23,18 +23,11 @@ def populate_product_datebase():
                 db.session.add(products)
             db.session.commit()
             
-def select():
-    statement = db.select(Customer).order_by(Customer.name)
-    records = db.session.execute(statement)
-    cust = []
-    for i in records.scalars():
-        u = {
-             }
 if __name__ == "__main__":
     with app.app_context():
         db.drop_all()
         db.create_all()
         populate_customer_datebase()
         populate_product_datebase()
-        select()
+        
         
