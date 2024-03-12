@@ -18,21 +18,32 @@ def homepage():
 
 @app.route('/customers')
 def customer_list():
-    print("Customers")
-    with open('./data/customers.csv', 'r') as file:
-        reader = DictReader(file)
-        customers = list(reader)
+    request = db.session.execute(db.select(Customer).order_by(Customer.id)) 
+    customers = []
+    for i in request.scalars():
+        u = {
+            "id": i.id, 
+            "name": i.name, 
+            "phone": i.phone, 
+            "balance": i.balance, 
+        }
+        customers.append(u)
+    
     return render_template("customers.html", customers=customers)
 
 @app.route('/products')
 def product_list():
-    print("Products")
-    with open('./data/products.csv', 'r') as file:
-        reader = DictReader(file)
-        products = list(reader)
-        for i in products:
-            i["price"] = float(i["price"])
-            i["name"] = i["name"].capitalize()
+    request = db.session.execute(db.select(Product).order_by(Product.id)) 
+    products = []
+    for i in request.scalars():
+        u = {
+            "id": i.id, 
+            "product": i.product.capitalize(), 
+            "price": i.price, 
+            "available": i.available, 
+        }
+        products.append(u)
+    
     return render_template("products.html", products=products)
 
 @app.route('/api/customers')
@@ -95,11 +106,9 @@ def product_json(id):
         
     return jsonify(prod)
 
-#fix this on both product and customer NOTE
 @app.route('/api/customers', methods=['POST'])
 def add_customer():
     data = request.get_json()
-    # return data
     if data['name'] == '' or data['phone'] == '' or not data:
         return jsonify({'status': 'error'}), 400
     
@@ -107,28 +116,26 @@ def add_customer():
     db.session.add(customer)
     db.session.commit()
     return jsonify({'status': 'success'}), 201
-    
-#fix this on both product and customer NOTE
+
 @app.route('/api/customers/<int:cust_id>', methods=['PUT'])
 def all_bal(cust_id):   
-    
     data = request.get_json()
+    
     if not data:
         return jsonify({'status': 'error'}), 400
     records = Customer.query.get_or_404(cust_id)
     records.balance = data['balance']
     db.session.commit()
     
-    return jsonify({'id': records.id, 'name': records.name, 'phone': records.phone, 'balance': records.balance}), 204
+    return jsonify({'id': records.id}), 201
     
 @app.route('/api/customers/<int:cust_id>', methods=['DELETE'])
 def delete_customer(cust_id):
     customer = Customer.query.get_or_404(cust_id)
     db.session.delete(customer)
     db.session.commit()
-    return jsonify({'status': 'success'}), 204
+    return jsonify({'status': 'success'}), 201
 
-#fix this on both product and customer NOTE
 @app.route('/api/products', methods=['POST'])
 def add_product():
     data = request.get_json()
@@ -143,20 +150,18 @@ def add_product():
     else:
         return jsonify({'status': 'error'}), 400
     
-#fix this on both product and customer NOTE
 @app.route('/api/products/<int:prod_id>', methods=['PUT'])
-def update_product(prod_id):
+def update_product(prod_id):        
     data = request.get_json()
-    if data['price'] < 0 or not data or data['product'] == '':
-        return jsonify({'status': 'error'}), 400
     
-    product = Customer.query.get_or_404(prod_id)
-    #fix this on both product and customer NOTE
+    if not data:
+        return jsonify({'status': 'error'}), 400
+    product = Product.query.get_or_404(prod_id)
     product.product = data['product']
     product.price = data['price']
     product.available = data['available']
     db.session.commit()
-        
+      
     return jsonify({'status': 'success'}), 201
 
 @app.route('/api/products/<int:prod_id>', methods=['DELETE'])
@@ -164,7 +169,7 @@ def delete_product(prod_id):
     product = Product.query.get_or_404(prod_id)
     db.session.delete(product)
     db.session.commit()
-    return jsonify({'status': 'success'}), 204
+    return jsonify({'status': 'success'}), 201
 
 
 
