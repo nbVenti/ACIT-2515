@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, jsonify, request
 from pathlib import Path
 from db import db
-from models import Customer, Product
+from models import Customer, Product, Order, ProductOrder
 from csv import DictReader
 
 
@@ -25,7 +25,7 @@ def customer_list():
             "id": i.id, 
             "name": i.name, 
             "phone": i.phone, 
-            "balance": i.balance, 
+            "balance": int(i.balance) 
         }
         customers.append(u)
     
@@ -46,6 +46,45 @@ def product_list():
     
     return render_template("products.html", products=products)
 
+@app.route('/orders')
+def orders_list():
+    orders = db.session.execute(db.select(Order).order_by(Order.id))
+    total_orders = []
+    for i in orders.scalars():
+        u = {
+            'id' : i.id
+        }
+        total_orders.append(u)
+
+    return render_template("orders.html", orders = total_orders)
+
+
+#start this after making a varible in the URL path
+# @app.route('/order/<int:id>')
+# def order(id):
+#     pass
+
+
+#FIX THIS NOTE FIX FIX FIX FIX FIX (add a loop for just the orders part maybe?)
+@app.route("/customer/<int:id>")
+def detailed_customer(id):
+    records = db.session.execute(db.select(Customer).where(Customer.id == id))
+    customers = []
+    for i in records.scalars():
+        # u = {
+        #     "id": i.id, 
+        #     "name": i.name, 
+        #     "phone": i.phone, 
+        #     "balance": "$"+ str(int(i.balance)), 
+        #     'orders': i.orders
+        #     }
+        # customers.append(u)
+        print(i.orders[0].products[0].product.product) ### this will diplay eggs if the id == 1    
+        print(i.orders[0].products[0].product.price) ### search for customer Id, then search for the first index in the orders list, then searches for the fist index of the ProductOrder list, then searches for the term in the Product class
+        print(i.orders[0].products[0].quantity) ### how much of each item was ordered
+
+    return render_template('detailed.html', customers=customers)
+    
 @app.route('/api/customers')
 def customers_json():
     records = db.session.execute(db.select(Customer).order_by(Customer.id))
@@ -58,7 +97,7 @@ def customers_json():
             'balance: ': i.balance
             }
         cust.append(u)
-    # return(cust)
+
     return jsonify(cust)
 
 @app.route('/api/customers/<int:id>')
@@ -157,6 +196,12 @@ def update_product(prod_id):
     if not data:
         return jsonify({'status': 'error'}), 400
     product = Product.query.get_or_404(prod_id)
+    if data['product'] == '':
+        data['prodcut'] = product.product
+    if data['price'] == '':
+        data['price'] = product.price
+    if data['available'] == '':
+        data['available'] = product.available
     product.product = data['product']
     product.price = data['price']
     product.available = data['available']

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Orders</h1>
+<table class="table">
+    <thead class="thead-dark"> 
+    <th>Order ID</th>
+    <th>Links</th>
+{% for order in orders %}
+<p>
+    <tr>
+        <td>{{ order.id }}</td>
+        <td>
+            <a href=/order>Click here for details</a>  
+            <!-- imploment a way to put variables in the HREF path --> 
+        </td>
+    </tr>
+</p>
+{% endfor %}
+</table>
+</thead>
+{% endblock %}
