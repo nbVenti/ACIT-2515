@@ -1,19 +1,24 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>Customer</h1>
+<h1>Customer ID {{ id }}</h1>
+<h2>{{ customer }}</h2>
 <table class="table">
     <thead class="thead-dark"> 
     <th>Customer Name</th>
     <th>Phone Number</th>
     <th>Balance</th>
+    <th>Orders</th>
 {% for customer in customers %}
 <p>
     <tr>
     <td>{{ customer.name }}</td>
     <td>{{ customer.phone }}</td>
-    <td>{{ customer.balance }}</td>
-    <td>{{ customer.orders }}</td>
+    <td>${{ customer.balance }}</td>
+    <td>
+        {% for order in customer.orders %}
+        <a href="{{ url_for('order', id=order.id) }}">Order ID {{ order.id }}</a>
+        {% endfor %}
+    </td>
     </tr>
 
 

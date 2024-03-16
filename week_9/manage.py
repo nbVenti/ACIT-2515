@@ -56,5 +56,13 @@ if __name__ == "__main__":
         populate_customer_datebase()
         populate_product_datebase()
         rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
+        rand_order()
         
         

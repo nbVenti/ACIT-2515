@@ -11,8 +11,7 @@
     <tr>
         <td>{{ order.id }}</td>
         <td>
-            <a href=/order>Click here for details</a>  
-            <!-- imploment a way to put variables in the HREF path --> 
+            <a href="{{ url_for('order', id=order.id) }}">Click here for details</a>  
         </td>
     </tr>
 </p>

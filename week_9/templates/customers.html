@@ -7,12 +7,15 @@
     <th>Customer Name</th>
     <th>Phone Number</th>
     <th>Balance</th>
+    <th>Details</th>
 {% for customer in customers %}
 <p>
     <tr>
     <td>{{ customer.name }}</td>
     <td>{{ customer.phone }}</td>
     <td>${{ customer.balance }}</td>
+    <td>
+        <a href="{{ url_for('detailed_customer', id=customer.id) }}">Click here for details</a>
     </tr>
 </p>
 {% endfor %}

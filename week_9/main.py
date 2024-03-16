@@ -1,8 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from pathlib import Path
 from db import db
 from models import Customer, Product, Order, ProductOrder
-from csv import DictReader
+
 
 
 
@@ -58,32 +58,48 @@ def orders_list():
 
     return render_template("orders.html", orders = total_orders)
 
+@app.route('/order/<int:id>')
+def order(id):
+    order = db.session.execute(db.select(Order).where(Order.id == id))
+    orders = []
+    for i in order.scalars():
+        u = {
+            'name': i.customer.name,
+            'balance': int(i.customer.balance),
+            "products": [f"{n.product.product} ({u.quantity})" for n, u in zip(i.products, i.products)],
+            'price':  int(sum([int(u.product.price) * u.quantity for u in i.products]))
+        }
+        orders.append(u)
+        # print(i.customer.name)
+        # print(int(i.customer.balance))
+        # for u in i.products:
+        #     print(u.product.product, u.quantity)
+        #     print(int(u.product.price) * u.quantity)
+        # print([f"{n.product.product} ({u.quantity})" for n, u in zip(i.products, i.products)])
+        # print(sum([int(u.product.price) * u.quantity for u in i.products]))
+    return render_template("detailed_order.html", id = id, orders = orders, customer_id=i.customer.id)
 
-#start this after making a varible in the URL path
-# @app.route('/order/<int:id>')
-# def order(id):
-#     pass
-
-
-#FIX THIS NOTE FIX FIX FIX FIX FIX (add a loop for just the orders part maybe?)
 @app.route("/customer/<int:id>")
 def detailed_customer(id):
     records = db.session.execute(db.select(Customer).where(Customer.id == id))
     customers = []
     for i in records.scalars():
-        # u = {
-        #     "id": i.id, 
-        #     "name": i.name, 
-        #     "phone": i.phone, 
-        #     "balance": "$"+ str(int(i.balance)), 
-        #     'orders': i.orders
-        #     }
-        # customers.append(u)
-        print(i.orders[0].products[0].product.product) ### this will diplay eggs if the id == 1    
-        print(i.orders[0].products[0].product.price) ### search for customer Id, then search for the first index in the orders list, then searches for the fist index of the ProductOrder list, then searches for the term in the Product class
-        print(i.orders[0].products[0].quantity) ### how much of each item was ordered
-
-    return render_template('detailed.html', customers=customers)
+        u = {
+            "id": i.id, 
+            "name": i.name, 
+            "phone": i.phone, 
+            'balance': int(i.balance), 
+            'orders': i.orders
+            }
+        # for j in u['orders']:
+        #     print(j)
+        #     for x in j.products:
+        #         print(x.product.product)
+        customers.append(u)
+        # print(i.orders[0].products[0].product.product)### this will diplay eggs if the id == 1    
+        # print(i.orders[0].products[0].product.price) ### search for customer Id, then search for the first index in the orders list, then searches for the fist index of the ProductOrder list, then searches for the term in the Product class
+        # print(i.orders[0].products[0].quantity) ### how much of each item was ordered
+    return render_template('detailed.html',customer=customers[0]['name'], id = id, customers=customers)
     
 @app.route('/api/customers')
 def customers_json():
@@ -142,7 +158,6 @@ def product_json(id):
             'available: ': i.available
             }
         prod.append(u)
-        
     return jsonify(prod)
 
 @app.route('/api/customers', methods=['POST'])
@@ -216,7 +231,30 @@ def delete_product(prod_id):
     db.session.commit()
     return jsonify({'status': 'success'}), 201
 
-
+@app.route('/api/orders', methods=['POST'])
+def add_order():
+    data = request.get_json()
+    if not data or data['customer_id'] == '' or len(data['items']) <= 0:
+        return jsonify({'status': 'error'}), 400
+    test_id = Customer.query.get_or_404(data['customer_id'])
+    
+    order = Order(customer=test_id)
+    db.session.add(order)
+    
+    for i in data['items']:
+        product = db.session.execute(db.select(Product).where(Product.product == i['name'])).scalar()
+        new_order = ProductOrder(order=order, product=product, quantity=i['quantity'])
+        db.session.add(new_order)
+    db.session.commit()   
+        
+    return jsonify({'status': 'success'}), 201
+    
+@app.route('/orders/<int:ORDER_ID>/delete', methods=['POST'])
+def delete_order(ORDER_ID):
+    order = Order.query.get_or_404(ORDER_ID)
+    db.session.delete(order)
+    db.session.commit()
+    return redirect(url_for('orders_list'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)

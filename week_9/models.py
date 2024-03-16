@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Float, Numeric, ForeignKey, Integer, String
+from sqlalchemy import Float, Numeric, ForeignKey, Integer, String
 from sqlalchemy.orm import mapped_column, relationship
 
 from db import db
@@ -36,7 +36,7 @@ class Order(db.Model):
     customer_id = mapped_column(Integer, ForeignKey(Customer.id), nullable=False)
     total = mapped_column(Float(200))
     customer = relationship("Customer", back_populates="orders")
-    products = relationship("ProductOrder", back_populates="order")
+    products = relationship("ProductOrder", back_populates="order", cascade="all, delete-orphan")
 
 class ProductOrder(db.Model):
     id = mapped_column(Integer, primary_key=True)
