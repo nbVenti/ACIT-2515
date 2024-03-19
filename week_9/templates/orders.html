@@ -5,11 +5,18 @@
 <table class="table">
     <thead class="thead-dark"> 
     <th>Order ID</th>
+    <th>Order Products</th>
     <th>Links</th>
 {% for order in orders %}
 <p>
     <tr>
         <td>{{ order.id }}</td>
+        <td>
+            <ul>
+                {% for product in order.products %}
+                <li>{{ product }}</li>
+                {% endfor %}
+            </ul>
         <td>
             <a href="{{ url_for('order', id=order.id) }}">Click here for details</a>  
         </td>

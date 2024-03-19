@@ -52,8 +52,10 @@ def orders_list():
     total_orders = []
     for i in orders.scalars():
         u = {
-            'id' : i.id
+            'id' : i.id,
+            'products': [f"{n.product.product} ({n.quantity})" for n in i.products]
         }
+        
         total_orders.append(u)
 
     return render_template("orders.html", orders = total_orders)
@@ -66,9 +68,10 @@ def order(id):
         u = {
             'name': i.customer.name,
             'balance': int(i.customer.balance),
-            "products": [f"{n.product.product} ({u.quantity})" for n, u in zip(i.products, i.products)],
+            "products": [f"{n.product.product} ({n.quantity})" for n in i.products],
             'price':  int(sum([int(u.product.price) * u.quantity for u in i.products]))
         }
+        
         orders.append(u)
         # print(i.customer.name)
         # print(int(i.customer.balance))
