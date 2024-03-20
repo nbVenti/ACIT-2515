@@ -4,18 +4,17 @@
 <h1>Customers</h1>
 <table class="table">
     <thead class="thead-dark"> 
+    <th>Customer ID</th>
     <th>Customer Name</th>
     <th>Phone Number</th>
     <th>Balance</th>
-    <th>Details</th>
 {% for customer in customers %}
 <p>
     <tr>
-    <td>{{ customer.name }}</td>
+    <td><a href="{{ url_for('detailed_customer', id=customer.id) }}">{{ customer.id }}</a></td>
+    <td><a href="{{ url_for('detailed_customer', id=customer.id) }}">{{ customer.name }}</a></td>
     <td>{{ customer.phone }}</td>
-    <td>${{ customer.balance }}</td>
-    <td>
-        <a href="{{ url_for('detailed_customer', id=customer.id) }}">Click here for details</a>
+    <td>${{ customer.balance }}</td> 
     </tr>
 </p>
 {% endfor %}

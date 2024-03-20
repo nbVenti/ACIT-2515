@@ -25,7 +25,7 @@ def customer_list():
             "id": i.id, 
             "name": i.name, 
             "phone": i.phone, 
-            "balance": int(i.balance) 
+            "balance": format(i.balance, '.2f')
         }
         customers.append(u)
     
@@ -68,9 +68,12 @@ def order(id):
         u = {
             'name': i.customer.name,
             'balance': int(i.customer.balance),
-            "products": [f"{n.product.product} ({n.quantity})" for n in i.products],
-            'price':  int(sum([int(u.product.price) * u.quantity for u in i.products]))
+            'products': [f"{n.product.product} ({n.quantity} ${format((n.product.price*n.quantity),'.2f')})" for n in i.products],
+            'price':  Order.price(i),
+            'processed': "Not processed"
         }
+        if i.processed:
+            u['processed'] = i.processed
         
         orders.append(u)
         # print(i.customer.name)
@@ -246,6 +249,8 @@ def add_order():
     
     for i in data['items']:
         product = db.session.execute(db.select(Product).where(Product.product == i['name'])).scalar()
+        if not product:
+            return jsonify({'status': "error"}), 400
         new_order = ProductOrder(order=order, product=product, quantity=i['quantity'])
         db.session.add(new_order)
     db.session.commit()   
@@ -258,6 +263,31 @@ def delete_order(ORDER_ID):
     db.session.delete(order)
     db.session.commit()
     return redirect(url_for('orders_list'))
+
+@app.route('/api/orders/<int:ORDER_ID>', methods=['PUT'])
+def test_orders(ORDER_ID):
+    order = db.session.execute(db.select(Order).where(Order.id == ORDER_ID))
+    data = request.get_json()
+    if not data:
+        return jsonify({'status': 'error'}), 400
+    p = []
+    
+    for i in order.scalars():
+        for __ in data:
+            if data['process'] == True:
+                if data['strategy'] == "ignore":
+                    test = i.process("ignore")
+                elif data['strategy'] == "reject":
+                    test = i.process("reject")
+                else:
+                    test = i.process()   
+            else:
+                return jsonify({'status': 'error'}), 400      
+        x = {
+            "response":test
+        }
+        p.append(x)
+    return jsonify(p)
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
