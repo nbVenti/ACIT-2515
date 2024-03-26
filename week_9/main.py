@@ -53,16 +53,18 @@ def orders_list():
     for i in orders.scalars():
         u = {
             'id' : i.id,
-            'products': [f"{n.product.product} ({n.quantity})" for n in i.products]
+            'products': [f"{n.product.product} ({n.quantity})" for n in i.products],
+            'processed': None
         }
+        u['processed'] = i.processed or "Not processed"
         
         total_orders.append(u)
-
+    
     return render_template("orders.html", orders = total_orders)
 
-@app.route('/order/<int:id>')
-def order(id):
-    order = db.session.execute(db.select(Order).where(Order.id == id))
+@app.route('/order/<int:ORDER_ID>')
+def order(ORDER_ID):
+    order = db.session.execute(db.select(Order).where(Order.id == ORDER_ID))
     orders = []
     for i in order.scalars():
         u = {
@@ -70,10 +72,7 @@ def order(id):
             'balance': int(i.customer.balance),
             'products': [f"{n.product.product} ({n.quantity} ${format((n.product.price*n.quantity),'.2f')})" for n in i.products],
             'price':  Order.price(i),
-            'processed': "Not processed"
         }
-        if i.processed:
-            u['processed'] = i.processed
         
         orders.append(u)
         # print(i.customer.name)
@@ -83,7 +82,7 @@ def order(id):
         #     print(int(u.product.price) * u.quantity)
         # print([f"{n.product.product} ({u.quantity})" for n, u in zip(i.products, i.products)])
         # print(sum([int(u.product.price) * u.quantity for u in i.products]))
-    return render_template("detailed_order.html", id = id, orders = orders, customer_id=i.customer.id)
+    return render_template("detailed_order.html", id = ORDER_ID, orders = orders, customer_id=i.customer.id, processed = i.processed)
 
 @app.route("/customer/<int:id>")
 def detailed_customer(id):
@@ -275,18 +274,23 @@ def test_orders(ORDER_ID):
     for i in order.scalars():
         for __ in data:
             if data['process'] == True:
-                if data['strategy'] == "ignore":
-                    test = i.process("ignore")
-                elif data['strategy'] == "reject":
-                    test = i.process("reject")
+                if 'strategy' in data:
+                    if data['strategy'] == "ignore":
+                        test = i.process("ignore")
+                    elif data['strategy'] == "reject":
+                        test = i.process("reject")
+                    else:
+                        test = i.process()  
                 else:
-                    test = i.process()   
+                    test = i.process() 
             else:
                 return jsonify({'status': 'error'}), 400      
         x = {
             "response":test
         }
         p.append(x)
+    i.get_processed_time()
+    db.session.commit()
     return jsonify(p)
 
 if __name__ == '__main__':

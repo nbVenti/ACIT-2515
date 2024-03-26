@@ -7,7 +7,9 @@
     <th>Customer Balance</th>
     <th>Items ordered</th>
     <th>Estimated price</th>
-    
+    {% if processed %}
+    <th>Order processed</th>
+    {% endif %}
     <th>Customer details</th>
     <th>Delete</th>
 
@@ -22,6 +24,9 @@
     {% endfor %}
     </td>
     <td>${{ order.price }}</td>
+    {% if processed %}
+    <td>{{ processed }}</td>
+    {% endif %}
     <td>
         <a href="{{ url_for('detailed_customer', id=customer_id) }}">Customer ID {{ customer_id }}</a>
     </td>

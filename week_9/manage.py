@@ -55,4 +55,4 @@ if __name__ == "__main__":
         db.create_all()
         populate_customer_datebase()
         populate_product_datebase()
-        rand_order(100)
+        rand_order(40)

@@ -6,21 +6,22 @@
     <thead class="thead-dark"> 
     <th>Order ID</th>
     <th>Order Products</th>
-    <th>Links</th>
+    <th>Order processed</th>
     <th>Delete</th>
 {% for order in orders %}
 <p>
     <tr>
-        <td>{{ order.id }}</td>
+        <td> 
+            <a href="{{ url_for('order', ORDER_ID=order.id) }}">{{ order.id }}</a> 
+        </td>
         <td>
             <ul>
                 {% for product in order.products %}
                 <li>{{ product }}</li>
                 {% endfor %}
             </ul>
-        <td>
-            <a href="{{ url_for('order', id=order.id) }}">Click here for details</a>  
         </td>
+        <td>{{ order.processed }}</td>
         <td>
             <form method="POST" action="{{ url_for('delete_order', ORDER_ID=order.id) }}"> 
             <button type="submit">Delete</button>

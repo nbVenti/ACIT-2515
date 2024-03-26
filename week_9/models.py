@@ -38,7 +38,7 @@ class Order(db.Model):
     customer_id = mapped_column(Integer, ForeignKey(Customer.id), nullable=False)
     total = mapped_column(Float(200))   
     created = mapped_column(DateTime,nullable=False,default=func.now())
-    processed = mapped_column(DateTime, nullable=True, default=None)
+    processed = mapped_column(DateTime, nullable=True)
     customer = relationship("Customer", back_populates="orders")
     products = relationship("ProductOrder", back_populates="order", cascade="all, delete-orphan")
     def process(self,strategy="adjust"):
@@ -58,13 +58,12 @@ class Order(db.Model):
             u.product.available = u.product.available - u.quantity
             self.customer.balance = self.customer.balance - int(u.product.price * u.quantity )
             self.processed = datetime.now()
-        return True, "done"
+        return True, self.processed
         
         # if self.products.quantity > self.products.product.available
     def price(self):
         # for u in i.products:
         return format((sum([(u.product.price) * u.quantity for u in self.products])), '.2f')
-        
 class ProductOrder(db.Model):
     id = mapped_column(Integer, primary_key=True)
     order_id = mapped_column(Integer, ForeignKey(Order.id),nullable=False)
