@@ -4,12 +4,12 @@ from models import Product
 
 api_product = Blueprint('api_product', __name__)
 
-@api_product.route('/product', methods=['GET'])
+@api_product.route('/', methods=['GET'])
 def get_products():
     products = Product.query.all()
     return jsonify([product.to_json() for product in products])
 
-@api_product.route('/product', methods=['POST'])
+@api_product.route('/', methods=['POST'])
 def create_product():
     data = request.get_json()
     if data['name'] == '' or data['price'] == '' or not data:
@@ -23,14 +23,14 @@ def create_product():
     else:
         return jsonify({'status': 'error'}), 400
 
-@api_product.route('/product/<int:id>', methods=['GET'])
+@api_product.route('/<int:id>', methods=['GET'])
 def get_product(id):
     product = Product.query.get(id)
     if not product:
         return jsonify({'status': 'error'}), 404
     return jsonify(product.to_json())
 
-@api_product.route('/product/<int:id>', methods=['PUT'])
+@api_product.route('/<int:id>', methods=['PUT'])
 def update_product(id):
     product = Product.query.get(id)
     if not product:
@@ -44,7 +44,7 @@ def update_product(id):
     db.session.commit()
     return jsonify({'status': 'success'})
 
-@api_product.route('/product/<int:id>', methods=['DELETE'])
+@api_product.route('/<int:id>', methods=['DELETE'])
 def delete_product(id):
     product = Product.query.get_or_404(id)
     db.session.delete(product)

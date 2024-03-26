@@ -2,7 +2,7 @@ import requests
 import webbrowser
 
 # CHANGE THE VARIABLE BELOW TO YOUR FLASK URL
-FLASK_URL = "http://localhost:8009"
+FLASK_URL = "http://localhost:3000"
 
 
 def http(method, path, data=None):
