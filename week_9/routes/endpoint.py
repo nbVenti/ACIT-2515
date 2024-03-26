@@ -59,7 +59,7 @@ def get_orders():
 def get_order(id):
     order = db.session.execute(db.select(Order).where(Order.id == id)).scalars().first()
     if not order:
-        return redirect(url_for('html.get_orders'))
+        return redirect(url_for('pages.get_orders'))
     orders = []
     u = {
         'name': order.customer.name,

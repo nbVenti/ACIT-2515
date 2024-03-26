@@ -38,7 +38,7 @@ class Order(db.Model):
     customer_id = mapped_column(Integer, ForeignKey(Customer.id), nullable=False)
     total = mapped_column(Float(200))   
     created = mapped_column(DateTime,nullable=False,default=func.now())
-    processed = mapped_column(DateTime, nullable=True, default='None')
+    processed = mapped_column(DateTime, nullable=True)
     customer = relationship("Customer", back_populates="orders")
     products = relationship("ProductOrder", back_populates="order", cascade="all, delete-orphan")
     def process(self,strategy="adjust"):
