@@ -1,7 +1,6 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask
 from pathlib import Path
 from db import db
-from models import Customer, Product, Order
 
 from routes import api_customer, api_product, api_order, endpoint
 
