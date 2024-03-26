@@ -7,12 +7,13 @@
     <th>Order ID</th>
     <th>Order Products</th>
     <th>Order processed</th>
+    <th>Process</th>
     <th>Delete</th>
 {% for order in orders %}
 <p>
     <tr>
         <td> 
-            <a href="{{ url_for('order', ORDER_ID=order.id) }}">{{ order.id }}</a> 
+            <a href="{{ url_for('pages.get_order', id=order.id) }}">{{ order.id }}</a> 
         </td>
         <td>
             <ul>
@@ -23,7 +24,12 @@
         </td>
         <td>{{ order.processed }}</td>
         <td>
-            <form method="POST" action="{{ url_for('delete_order', ORDER_ID=order.id) }}"> 
+            <form method="POST" action="{{ url_for('pages.process_order', id=order.id) }}"> 
+            <button type="submit">Process</button>
+            </form>
+        </td>
+        <td>
+            <form method="POST" action="{{ url_for('pages.delete_order', id=order.id) }}"> 
             <button type="submit">Delete</button>
             </form>
         </td>

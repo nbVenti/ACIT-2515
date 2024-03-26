@@ -11,8 +11,8 @@
 {% for customer in customers %}
 <p>
     <tr>
-    <td><a href="{{ url_for('detailed_customer', id=customer.id) }}">{{ customer.id }}</a></td>
-    <td><a href="{{ url_for('detailed_customer', id=customer.id) }}">{{ customer.name }}</a></td>
+    <td><a href="{{ url_for('pages.get_customer', id=customer.id) }}">{{ customer.id }}</a></td>
+    <td><a href="{{ url_for('pages.get_customer', id=customer.id) }}">{{ customer.name }}</a></td>
     <td>{{ customer.phone }}</td>
     <td>${{ customer.balance }}</td> 
     </tr>

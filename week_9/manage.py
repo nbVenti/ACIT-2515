@@ -21,7 +21,7 @@ def populate_product_datebase():
             reader = DictReader(file)
             products = list(reader)
             for i in products:
-                products = Product(product = i['name'],price = i['price'], available = int(10.0))
+                products = Product(product = i['name'],price = i['price'], available = random.randint(1000,2000))
                 db.session.add(products)
             db.session.commit()
             

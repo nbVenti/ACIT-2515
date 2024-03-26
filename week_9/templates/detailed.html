@@ -16,7 +16,7 @@
     <td>${{ customer.balance }}</td>
     <td>
         {% for order in customer.orders %}
-        <a href="{{ url_for('order', id=order.id) }}">Order ID {{ order.id }}</a>
+        <a href="{{ url_for('pages.get_order', id=order.id) }}">Order ID {{ order.id }}</a>
         {% endfor %}
     </td>
     </tr>

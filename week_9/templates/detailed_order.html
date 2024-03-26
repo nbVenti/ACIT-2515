@@ -28,10 +28,10 @@
     <td>{{ processed }}</td>
     {% endif %}
     <td>
-        <a href="{{ url_for('detailed_customer', id=customer_id) }}">Customer ID {{ customer_id }}</a>
+        <a href="{{ url_for('pages.get_customer', id=customer_id) }}">Customer ID {{ customer_id }}</a>
     </td>
     <td>
-        <form method="POST" action="{{ url_for('delete_order', ORDER_ID=id) }}"> 
+        <form method="POST" action="{{ url_for('pages.delete_order', id=id) }}"> 
         <button type="submit">Delete</button>
         </form>
     </td>
