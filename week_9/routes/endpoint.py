@@ -47,6 +47,7 @@ def get_orders():
             "id": i.id, 
             "customer_id": i.customer_id, 
             "products": [f"{n.product.product} ({n.quantity})" for n in i.products], 
+            'total': Order.price(i),
             "processed": None
         }
         u['processed'] = i.processed or "Not processed"
@@ -64,11 +65,10 @@ def get_order(id):
     u = {
         'name': order.customer.name,
         'balance': int(order.customer.balance),
-        'orders': [f"{n.product.product} ({n.quantity} ${format((n.product.price*n.quantity),'.2f')})" for n in order.products],
+        'products': [f"{n.product.product} ({n.quantity} ${format((n.product.price*n.quantity),'.2f')})" for n in order.products],
         'price':  Order.price(order),
     }
     orders.append(u)
-    print(orders)
     return render_template("detailed_order.html",id = id, orders = orders, customer_id=order.customer.id, processed = order.processed)
 
 @endpoint.route('/customer/<int:id>', methods=['GET'])

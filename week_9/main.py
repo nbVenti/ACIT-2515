@@ -1,6 +1,8 @@
 from flask import Flask
 from pathlib import Path
 from db import db
+from manage import create
+from demo import demo
 
 from routes import api_customer, api_product, api_order, endpoint
 
@@ -19,4 +21,7 @@ db.init_app(app)
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
+    create()
+    demo()
+    
     

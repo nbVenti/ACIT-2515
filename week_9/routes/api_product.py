@@ -15,7 +15,7 @@ def create_product():
     if data['name'] == '' or data['price'] == '' or not data:
         return jsonify({'status': 'error'}), 400
     
-    product = Product(name = data['name'], price = data['price'])
+    product = Product(product = data['name'], price = data['price'])
     if product:
         db.session.add(product)
         db.session.commit()

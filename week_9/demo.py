@@ -39,12 +39,28 @@ def delete(path):
 
 
 def demo():
+    # adding products 
     print("Adding a new product: 'salty nuts' (6.99)")
-    post("/api/products/", {"name": "salty nuts", "price": 6.99})
+    post("/api/product/", {"name": "salty nuts", "price": 6.99})
     input("Check for salty nuts in the web page. Press Enter when ready.")
     webbrowser.open(FLASK_URL + "/products")
     input("Press Enter to continue.")
-
+    print("Adding a new product: 'sweet nuts' (8.99)")
+    post("/api/product/", {"name": "sweet nuts", "price": 8.99})
+    input("Check for sweet nuts in the web page. Press Enter when ready.")
+    webbrowser.open(FLASK_URL + "/products")
+    input("Press Enter to continue.")
+    print("Add a new product: 'spicy nuts' (7.99)")
+    post("/api/product/", {"name": "spicy nuts", "price": 7.99})
+    input("Check for spicy nuts in the web page. Press Enter when ready.")
+    webbrowser.open(FLASK_URL + "/products")
+    input("Press Enter to continue.")  
+    #### make orders
+    
+    
+    
+    
+    
 
 if __name__ == "__main__":
     demo()

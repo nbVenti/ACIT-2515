@@ -4,6 +4,7 @@ from models import Customer, Product, Order, ProductOrder
 from csv import DictReader
 from sqlalchemy.sql import functions as func
 import random
+from demo import demo
 
 def populate_customer_datebase():
     with app.app_context():
@@ -48,11 +49,15 @@ def rand_order(x):
         new_order2 = ProductOrder(order=order,product=rand_prod,quantity=qty)
         db.session.add(new_order2)
         db.session.commit()
-    
-if __name__ == "__main__":
+        
+def create():
     with app.app_context():
         db.drop_all()
         db.create_all()
         populate_customer_datebase()
         populate_product_datebase()
         rand_order(40)
+    
+if __name__ == "__main__":
+    create()
+    demo()

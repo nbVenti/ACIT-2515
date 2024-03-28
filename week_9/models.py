@@ -22,7 +22,7 @@ class Customer(db.Model):
 class Product(db.Model):
  id = mapped_column(Integer, primary_key=True)
  product = mapped_column(String(200), nullable=False, unique=True)
- price = mapped_column(Float(200), nullable=False)
+ price = mapped_column(Numeric, nullable=False)
  available = mapped_column(Integer, nullable=False, default=True)
  orders = relationship("ProductOrder")
  def to_json(self):
@@ -36,7 +36,7 @@ class Product(db.Model):
 class Order(db.Model):
     id = mapped_column(Integer, primary_key=True)
     customer_id = mapped_column(Integer, ForeignKey(Customer.id), nullable=False)
-    total = mapped_column(Float(200))   
+    total = mapped_column(Float(200), nullable=True, default=0.0)   
     created = mapped_column(DateTime,nullable=False,default=func.now())
     processed = mapped_column(DateTime, nullable=True)
     customer = relationship("Customer", back_populates="orders")
@@ -58,11 +58,11 @@ class Order(db.Model):
             u.product.available = u.product.available - u.quantity
             self.customer.balance = self.customer.balance - int(u.product.price * u.quantity )
             self.processed = datetime.now()
+        db.session.commit()
         return True, self.processed
         
         # if self.products.quantity > self.products.product.available
     def price(self):
-        # for u in i.products:
         return format((sum([(u.product.price) * u.quantity for u in self.products])), '.2f')
 class ProductOrder(db.Model):
     id = mapped_column(Integer, primary_key=True)
